@@ -10,13 +10,31 @@ const ActivityModel = require('./models/Activity')
 const fs = require('fs');
 
 //*Llamo al archivo .env y destructuro la informacion 
-const {DB_USER, DB_PASSWORD, DB_HOST,DB_NAME} = process.env;
+const {DB_USER, DB_PASSWORD, DB_HOST,DB_NAME,DB_DEPLOY} = process.env;
 
 //* Utilizo la url de postreSQl para llamar a mi BD
-const sequelize = new Sequelize(
-  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
-  {logging: false, native: false},
-  );
+// const sequelize = new Sequelize(
+//   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
+//   {logging: false, native: false},
+//   );
+
+
+const sequelize = new Sequelize(DB_DEPLOY, {
+  logging: false, 
+  native: false, 
+  dialectOptions: {
+    acquireTimeout: 9000,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false // Solo si tienes problemas con certificados autofirmados
+    }
+  } 
+});
+
+// Aquí puedes definir tus modelos y configuraciones de Sequelize
+
+module.exports = sequelize;
+
 
 const basename = path.basename(__filename);
 
